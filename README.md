@@ -1,7 +1,8 @@
 # state.do
+
 Finite State Machine implementation with Durable Objects
 
-```
+```javascript
 // Returns a Promise, e.g.:
 // {
 //   id: 42,

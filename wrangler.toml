@@ -1,0 +1,11 @@
+name = "state-do"
+account_id = "b6641681fe423910342b9ffa1364c76d"
+main = "worker.js"
+compatibility_date = "2022-08-23"
+
+[durable_objects]
+bindings = [{name = "STATE", class_name = "State"}]
+
+[[migrations]]
+tag = "v1" # Should be unique for each entry
+new_classes = ["State"]
