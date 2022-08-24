@@ -5,14 +5,14 @@
   "description": "Cloudflare Worker & Durable Object for API Key Management",
   "repository": "git@github.com:drivly/state.do.git",
   "license": "MIT",
-  "dependencies": {
-    "xstate": "^4.33.3"
-  },
   "scripts": {
     "dev": "wrangler dev worker.js",
     "deploy": "wrangler publish worker.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write '**/*.{js,css,json,md}'"
+  },
+  "dependencies": {
+    "xstate": "^4.33.3"
   },
   "devDependencies": {
     "jest": "^28.1.3",
