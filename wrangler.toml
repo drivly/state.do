@@ -1,5 +1,6 @@
 name = "state-do"
 account_id = "b6641681fe423910342b9ffa1364c76d"
+route = { pattern = "state.do/api*", zone_id = "f92a591c82c79347536ecc4ef6dfb604" }
 main = "worker.js"
 compatibility_date = "2022-08-23"
 

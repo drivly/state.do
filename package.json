@@ -1,6 +1,11 @@
 {
+  "name": "state.do",
+  "module": "worker.js",
+  "version": "1.0.0",
+  "description": "Cloudflare Worker & Durable Object for API Key Management",
+  "repository": "git@github.com:drivly/state.do.git",
+  "license": "MIT",
   "dependencies": {
-    "jest": "^28.1.3",
     "xstate": "^4.33.3"
   },
   "scripts": {
@@ -10,14 +15,8 @@
     "format": "prettier --write '**/*.{js,css,json,md}'"
   },
   "devDependencies": {
+    "jest": "^28.1.3",
     "prettier": "^1.17.0",
     "wrangler": "^0.0.27"
-  },
-  "name": "state.do",
-  "main": "worker.js",
-  "version": "1.0.0",
-  "description": "Cloudflare Worker & Durable Object for API Key Management",
-  "repository": "git@github.com:drivly/state.do.git",
-  "license": "MIT",
-  "private": true
+  }
 }
