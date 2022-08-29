@@ -21,7 +21,7 @@ export class State {
     const { url, method } = req
     const { origin, hostname, pathname, searchParams, hash } = new URL(url)
     const id = req.headers.get('cf-ray') + '-' + req.cf.colo
-    const ts = Date.now()
+    const ts = Date.UTC()
     const retval = {
       origin,
       method,
