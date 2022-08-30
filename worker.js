@@ -43,12 +43,8 @@ export class State {
     }
     if (stateEvent) this.service.send(stateEvent)
 
-    const id = req.headers.get('cf-ray') + '-' + req.cf.colo
-    const ts = Date.now()
     const retval = {
-      id,
       instance,
-      ts,
       state: this.machineState,
       events: this.serviceState?.nextEvents.map((e) => `${origin}/${instance}/${e}`),
     }
