@@ -50,7 +50,7 @@ export class State {
       instance,
       ts,
       state: this.machineState,
-      events: this.serviceState?.nextEvents.map((e) => new URL(instance + '/' + e, origin)),
+      events: this.serviceState?.nextEvents.map((e) => `${origin}/${instance}/${e}`),
     }
     return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json' } })
   }
