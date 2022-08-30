@@ -6,7 +6,7 @@
   "repository": "git@github.com:drivly/state.do.git",
   "license": "MIT",
   "scripts": {
-    "dev": "wrangler dev worker.js",
+    "dev": "wrangler dev worker.js --local true",
     "deploy": "wrangler publish worker.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "format": "prettier --write '**/*.{js,css,json,md}'"
