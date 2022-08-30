@@ -43,7 +43,7 @@ export class State {
     if (stateEvent) this.service.send(stateEvent)
 
     const id = req.headers.get('cf-ray') + '-' + req.cf.colo
-    const ts = Date.UTC()
+    const ts = Date.now()
     const retval = {
       id,
       ts,
