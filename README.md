@@ -2,11 +2,49 @@
 
 Finite State Machine implementation with Durable Objects based on [xstate](https://xstate.js.org)
 
+## API
+
+<https://state.do/:key?{"id":"fetch","initial":"loading","states":{"loading":{"context":"https://example.com/","on":{"OK":"success","Error":"failure"}},"success":{"context":"https://graphology.do.cf/:key?newnode?example|","type":"final"},"failure":{"context":"https://alarms.do/fromNow/10sec/https://state.do/:key/RETRY","on":{"RETRY":{"target":"loading"}}}}}>
+
 <https://state.do/:key>
 
 <https://state.do/:key/:event>
 
-<https://state.do/:key?{"id":"fetch","initial":"idle","states":{"idle":{"on":{"FETCH":"loading"}},"loading":{"on":{"RESOLVE":"success","REJECT":"failure"}},"success":{"type":"final"},"failure":{"on":{"RETRY":{"target":"loading"}}}}}>
+```mermaid
+stateDiagram-v2
+direction LR
+loading-->failure: error
+failure-->loading: RETRY
+loading-->success: 200
+```
+
+```json
+{
+  "id": "fetch",
+  "initial": "loading",
+  "states": {
+    "loading": {
+      "context": "https://example.com/",
+      "on": {
+        "OK": "success",
+        "Error": "failure"
+      }
+    },
+    "success": {
+      "context": "https://graphology.do.cf/:key?newnode?example|",
+      "type": "final"
+    },
+    "failure": {
+      "context": "https://alarms.do/fromNow/10sec/https://state.do/:key/RETRY",
+      "on": {
+        "RETRY": {
+          "target": "loading"
+        }
+      }
+    }
+  }
+}
+```
 
 ## [🚀 We're hiring!](https://careers.do/apply)
 

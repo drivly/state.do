@@ -28,6 +28,16 @@ export class State {
       this.serviceState = state
       this.machineState = state.value
       await this.state.storage.put('machineState', this.machineState)
+      if (state.context) {
+        try {
+          const eventData = state.event?.data
+          // TODO: Let user specify format
+          const data = await fetch(state.context + eventData)
+          this.service.send('OK', { data: await data.text() })
+        } catch (error) {
+          this.service.send('Error', { data: error })
+        }
+      }
     })
     this.service.start(state)
   }
