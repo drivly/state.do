@@ -1,11 +1,12 @@
 # [state.do](https://state.do)
 
-Finite State Machine implementation with Durable Objects based on [xstate](https://xstate.js.org)
+Finite State Machine implementation with Durable Objects based on [xstate](https://xstate.js.org).
+Use the [editor](https://stately.ai/editor) to create your state machine, then add callback URLs to automate the machine events.
 
 ## API
 
 Initialize machine:
-<https://state.do/:key?{"id":"fetch","initial":"init","states":{"init":{"on":{"FETCH":"loading"}},"loading":{"callback":"https://example.com/","on":{"OK":"success","Error":"failure"}},"failure":{"callback":"https://alarms.do/fromNow/10sec/https://state.do/:key/RETRY","on":{"RETRY":{"target":"loading"}}},"success":{"callback":"https://graphology.do.cf/:key?newnode?example|","type":"final"}}}>
+<https://state.do/:key?{"id":"fetch","initial":"init","states":{"init":{"on":{"FETCH":"loading"}},"loading":{"callback":"https://fetcher.do/60sec/https://example.com/","on":{"4XX":"fault","5XX":"failure","*":"success"}},"failure":{"callback":"https://alarms.do/fromNow/10sec/https://state.do/:key/RETRY","on":{"RETRY":{"target":"loading"}}},"fault":{"callback":"https://example.logging.do/error?message=","type":"final"},"success":{"callback":"https://graphology.do.cf/:key?newnode?example|","type":"final"}}}>
 
 Read current state:
 <https://state.do/:key>
@@ -18,9 +19,10 @@ Send event to machine:
 ```mermaid
 stateDiagram-v2
 [*]-->loading: FETCH
-loading-->failure: Error
+loading-->⦿&nbsp;fault: 4XX
+loading-->failure: 5XX
+loading-->⦿&nbsp;success: *
 failure-->loading: RETRY
-loading-->[*]: OK
 ```
 
 ```json
@@ -32,10 +34,11 @@ loading-->[*]: OK
       "on": { "FETCH": "loading" }
     },
     "loading": {
-      "callback": "https://example.com/",
+      "callback": "https://fetcher.do/60sec/https://example.com/",
       "on": {
-        "OK": "success",
-        "Error": "failure"
+        "4XX": "fault",
+        "5XX": "failure",
+        "*": "success"
       }
     },
     "failure": {
@@ -45,6 +48,10 @@ loading-->[*]: OK
           "target": "loading"
         }
       }
+    },
+    "fault": {
+      "callback": "https://example.logging.do/error?message=",
+      "type": "final"
     },
     "success": {
       "callback": "https://graphology.do.cf/:key?newnode?example|",

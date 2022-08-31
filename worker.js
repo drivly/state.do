@@ -28,20 +28,13 @@ export class State {
       this.serviceState = state
       this.machineState = state.value
       await this.state.storage.put('machineState', this.machineState)
-      const callback = state.configuration
-        .flatMap((c) => c.config)
-        .reduce((acc, c) => {
-          return { ...acc, ...c }
-        }, {})?.callback
+      const callback = state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
-        try {
-          const eventData = state.event?.data
-          // TODO: Let user specify format
-          const data = await fetch(callback + eventData)
-          this.service.send('OK', { data: await data.text() })
-        } catch (error) {
-          this.service.send('Error', { data: error })
-        }
+        const eventData = state.event?.data
+        // TODO: Let user specify format
+        const data = await fetch(callback + (eventData || ''))
+        const event = this.serviceState?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
+        this.service.send(event || data.status.toString(), { data: await data.text() })
       }
     })
     this.service.start(state)
@@ -56,7 +49,7 @@ export class State {
       await this.state.storage.put('machineDefinition', this.machineDefinition)
       this.startMachine()
     }
-    if (stateEvent) this.service.send(stateEvent)
+    if (stateEvent) this.service?.send(stateEvent)
 
     const retval = {
       instance,
