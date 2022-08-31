@@ -28,11 +28,16 @@ export class State {
       this.serviceState = state
       this.machineState = state.value
       await this.state.storage.put('machineState', this.machineState)
-      if (state.context) {
+      const callback = state.configuration
+        .flatMap((c) => c.config)
+        .reduce((acc, c) => {
+          return { ...acc, ...c }
+        }, {})?.callback
+      if (callback) {
         try {
           const eventData = state.event?.data
           // TODO: Let user specify format
-          const data = await fetch(state.context + eventData)
+          const data = await fetch(callback + eventData)
           this.service.send('OK', { data: await data.text() })
         } catch (error) {
           this.service.send('Error', { data: error })
@@ -58,6 +63,7 @@ export class State {
       state: this.machineState,
       events: this.serviceState?.nextEvents.map((e) => `${origin}/${instance}/${e}`),
     }
+    if (retval.events && !retval.events.length) delete retval.events
     return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json' } })
   }
 }

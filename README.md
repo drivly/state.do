@@ -4,43 +4,49 @@ Finite State Machine implementation with Durable Objects based on [xstate](https
 
 ## API
 
-<https://state.do/:key?{"id":"fetch","initial":"loading","states":{"loading":{"context":"https://example.com/","on":{"OK":"success","Error":"failure"}},"success":{"context":"https://graphology.do.cf/:key?newnode?example|","type":"final"},"failure":{"context":"https://alarms.do/fromNow/10sec/https://state.do/:key/RETRY","on":{"RETRY":{"target":"loading"}}}}}>
+Initialize machine:
+<https://state.do/:key?{"id":"fetch","initial":"init","states":{"init":{"on":{"FETCH":"loading"}},"loading":{"callback":"https://example.com/","on":{"OK":"success","Error":"failure"}},"failure":{"callback":"https://alarms.do/fromNow/10sec/https://state.do/:key/RETRY","on":{"RETRY":{"target":"loading"}}},"success":{"callback":"https://graphology.do.cf/:key?newnode?example|","type":"final"}}}>
 
+Read current state:
 <https://state.do/:key>
 
+Send event to machine:
 <https://state.do/:key/:event>
 
 ```mermaid
 stateDiagram-v2
-direction LR
-loading-->failure: error
+[*]-->loading: FETCH
+loading-->failure: Error
 failure-->loading: RETRY
-loading-->success: 200
+loading-->[*]: OK
 ```
 
 ```json
 {
   "id": "fetch",
-  "initial": "loading",
+  "initial": "init",
   "states": {
+    "init": {
+      "on": { "FETCH": "loading" }
+    },
     "loading": {
-      "context": "https://example.com/",
+      "callback": "https://example.com/",
       "on": {
         "OK": "success",
         "Error": "failure"
       }
     },
-    "success": {
-      "context": "https://graphology.do.cf/:key?newnode?example|",
-      "type": "final"
-    },
     "failure": {
-      "context": "https://alarms.do/fromNow/10sec/https://state.do/:key/RETRY",
+      "callback": "https://alarms.do/fromNow/10sec/https://state.do/:key/RETRY",
       "on": {
         "RETRY": {
           "target": "loading"
         }
       }
+    },
+    "success": {
+      "callback": "https://graphology.do.cf/:key?newnode?example|",
+      "type": "final"
     }
   }
 }
