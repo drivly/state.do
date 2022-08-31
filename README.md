@@ -18,12 +18,12 @@ Send event to machine:
 
 ```mermaid
 stateDiagram-v2
-direction LR
-[*]-->loading: FETCH
-loading-->⦿&nbsp;fault: 4XX
-loading-->failure: 5XX
-loading-->⦿&nbsp;success: *
-failure-->loading: RETRY
+  direction LR
+  [*]-->loading: FETCH
+  loading-->⦿&nbsp;fault: 4XX
+  loading-->failure: 5XX
+  loading-->⦿&nbsp;success: *
+  failure-->loading: RETRY
 ```
 
 ```json
