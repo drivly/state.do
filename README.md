@@ -13,7 +13,7 @@ Read current state:
 Send event to machine:
 <https://state.do/:key/:event>
 
-## Example with callbacks
+## Example machine with callbacks
 
 ```mermaid
 stateDiagram-v2
