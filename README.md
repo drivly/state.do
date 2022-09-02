@@ -1,7 +1,7 @@
 # [state.do](https://state.do)
 
 Finite State Machine implementation with Durable Objects based on [xstate](https://xstate.js.org).
-Use the [editor](https://stately.ai/editor) to create your state machine, then add callback URLs to automate the machine events.
+Use the [editor](https://stately.ai/editor) to create and export your state machine, then optionally add callback URLs to automate the machine events.
 
 ## API
 
