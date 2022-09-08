@@ -5,7 +5,7 @@
       "name": "Cloudflare: debug server-side",
       "type": "node-terminal",
       "request": "launch",
-      "command": "yarn dev"
+      "command": "yarn dev --local true"
     },
     {
       "name": "Cloudflare: debug client-side",
@@ -17,7 +17,7 @@
       "name": "Cloudflare: debug full stack",
       "type": "node-terminal",
       "request": "launch",
-      "command": "yarn dev",
+      "command": "yarn dev --local true",
       "console": "integratedTerminal",
       "serverReadyAction": {
         "pattern": "started server on .+, url: (https?://.+)",
