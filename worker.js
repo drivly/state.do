@@ -14,6 +14,7 @@ export default {
 export class State {
   constructor(state, env) {
     this.state = state
+    this.env = env
     state.blockConcurrencyWhile(async () => {
       ;[this.machineDefinition, this.machineState] = await Promise.all([this.state.storage.get('machineDefinition'), this.state.storage.get('machineState')])
       if (this.machineDefinition) {
@@ -45,7 +46,7 @@ export class State {
   }
 
   async fetch(req) {
-    const { user, redirect } = await env.CTX.fetch(req).then(res => res.json())
+    const { user, redirect } = await this.env.CTX.fetch(req).then(res => res.json())
     if (redirect) return Response.redirect(redirect)
     const { url, method } = req
     const { origin, pathname, search } = new URL(url)
