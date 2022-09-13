@@ -1,19 +1,5 @@
 import { createMachine, interpret } from 'xstate'
 
-const api = {
-  icon: '●→',
-  name: 'state.do',
-  description: 'Finite State Machine implementation with Durable Objects based on xstate',
-  url: 'https://state.do/',
-  type: 'https://apis.do/state',
-  endpoints: {
-    create: origin + '/:key?{state_machine}',
-    read: origin + '/:key',
-    event: origin + '/:key/:event',
-  },
-  site: 'https://state.do',
-  repo: 'https://github.com/drivly/state.do',
-}
 
 export default {
   fetch: (req, env) => {
@@ -72,6 +58,20 @@ export class State {
     if (stateEvent) this.service?.send(stateEvent)
 
     const retval = {
+      api: {
+        icon: '●→',
+        name: 'state.do',
+        description: 'Finite State Machine implementation with Durable Objects based on xstate',
+        url: 'https://state.do/',
+        type: 'https://apis.do/state',
+        endpoints: {
+          create: origin + '/:key?{state_machine}',
+          read: origin + '/:key',
+          event: origin + '/:key/:event',
+        },
+        site: 'https://state.do',
+        repo: 'https://github.com/drivly/state.do',
+      },
       instance,
       state: this.machineState,
       events: this.serviceState?.nextEvents.map((e) => `${origin}/${instance}/${e}`),
