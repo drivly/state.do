@@ -50,11 +50,11 @@ failure-->loading: RETRY
       }
     },
     "fault": {
-      "callback": "https://example.logging.do/error?message=",
+      "callback": "https://example.logging.do/error",
       "type": "final"
     },
     "success": {
-      "callback": "https://graphology.do.cf/:key?newnode?example|",
+      "callback": "https://graphology.do.cf/:key?newnode?example",
       "type": "final"
     }
   }

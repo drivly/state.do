@@ -2,7 +2,7 @@
   "name": "state.do",
   "module": "worker.js",
   "version": "1.0.0",
-  "description": "Cloudflare Worker & Durable Object for API Key Management",
+  "description": "Finite State Machine implementation with Durable Objects based on xstate",
   "repository": "git@github.com:drivly/state.do.git",
   "license": "MIT",
   "scripts": {

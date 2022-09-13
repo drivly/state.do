@@ -1,9 +1,22 @@
 import { createMachine, interpret } from 'xstate'
 
+const api = {
+  icon: '●→',
+  name: 'state.do',
+  description: 'Finite State Machine implementation with Durable Objects based on xstate',
+  url: 'https://state.do/',
+  type: 'https://apis.do/state',
+  endpoints: {
+    create: origin + '/:key?{state_machine}',
+    read: origin + '/:key',
+    event: origin + '/:key/:event',
+  },
+  site: 'https://state.do',
+  repo: 'https://github.com/drivly/state.do',
+}
+
 export default {
   fetch: (req, env) => {
-    const { user, redirect } = await env.CTX.fetch(req).then(res => res.json())
-//     if (redirect) return Response.redirect(redirect)
     const { hostname, pathname } = new URL(req.url)
     const instance = pathname.split('/')[1]
     const id = env.STATE.idFromName(hostname + instance)
@@ -32,9 +45,12 @@ export class State {
       await this.state.storage.put('machineState', this.machineState)
       const callback = state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
-        const eventData = state.event?.data
         // TODO: Let user specify format
-        const data = await fetch(callback + (eventData || ''))
+        const url = typeof callback === 'string' || callback instanceof String ? callback : callback.url
+        const init = callback.init || { method: 'POST' }
+        init.body = state.event?.data || undefined
+
+        const data = await fetch(url, init)
         const event = this.serviceState?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
         this.service.send(event || data.status.toString(), { data: await data.text() })
       }
@@ -43,6 +59,8 @@ export class State {
   }
 
   async fetch(req) {
+    const { user, redirect } = await env.CTX.fetch(req).then(res => res.json())
+    if (redirect) return Response.redirect(redirect)
     const { url, method } = req
     const { origin, pathname, search } = new URL(url)
     const [_, instance, stateEvent] = pathname.split('/')
@@ -57,6 +75,7 @@ export class State {
       instance,
       state: this.machineState,
       events: this.serviceState?.nextEvents.map((e) => `${origin}/${instance}/${e}`),
+      user,
     }
     if (retval.events && !retval.events.length) delete retval.events
     return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json' } })
