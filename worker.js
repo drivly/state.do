@@ -2,6 +2,8 @@ import { createMachine, interpret } from 'xstate'
 
 export default {
   fetch: (req, env) => {
+    const { user, redirect } = await env.CTX.fetch(req).then(res => res.json())
+//     if (redirect) return Response.redirect(redirect)
     const { hostname, pathname } = new URL(req.url)
     const instance = pathname.split('/')[1]
     const id = env.STATE.idFromName(hostname + instance)
