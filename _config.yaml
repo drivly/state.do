@@ -1,2 +1,3 @@
-remote_theme: drivly/jekyll-docs
+remote_theme: drivly/docs
 icon: ●→
+login: /login
