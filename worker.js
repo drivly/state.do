@@ -79,6 +79,6 @@ export class State {
       user,
     }
     if (retval.events && !retval.events.length) delete retval.events
-    return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json' } })
+    return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } })
   }
 }
