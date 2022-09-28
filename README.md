@@ -1,7 +1,7 @@
 # [state.do](https://state.do)
 
 Finite State Machine implementation with Durable Objects based on [xstate](https://xstate.js.org).
-Use the [editor](https://stately.ai/editor) to create and export your state machine, then optionally add callback URLs to automate the machine events.
+Use the [editor](https://stately.ai/editor) to create and export your state machine, then optionally add callback fetch URLs/inits to automate the machine events.
 
 ## API
 
@@ -31,7 +31,9 @@ failure-->loading: RETRY
   "initial": "init",
   "states": {
     "init": {
-      "on": { "FETCH": "loading" }
+      "on": {
+        "FETCH": "loading"
+      }
     },
     "loading": {
       "callback": "https://fetcher.do/60sec/https://example.com/",
@@ -54,7 +56,12 @@ failure-->loading: RETRY
       "type": "final"
     },
     "success": {
-      "callback": "https://graphology.do.cf/:key?newnode?example",
+      "callback": {
+        "url": "https://graphology.do.cf/:key?newnode?example",
+        "init": {
+          "method": "POST"
+        }
+      },
       "type": "final"
     }
   }
