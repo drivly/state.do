@@ -46,13 +46,11 @@ export class State {
   }
 
   async fetch(req) {
-    const { user, redirect } = await this.env.CTX.fetch(req).then(res => res.json())
+    const { user, redirect, json, method, origin, pathSegments, search } = await this.env.CTX.fetch(req).then(res => res.json())
     if (redirect) return Response.redirect(redirect)
-    const { url, method } = req
-    const { origin, pathname, search } = new URL(url)
-    const [_, instance, stateEvent] = pathname.split('/')
+    const [instance, stateEvent] = pathSegments
     if ((search || method === 'POST') && !this.machineDefinition) {
-      this.machineDefinition = (search && JSON.parse(decodeURIComponent(search.substring(1)))) || (await req.json())
+      this.machineDefinition = (search && JSON.parse(decodeURIComponent(search.substring(1)))) || json
       await this.state.storage.put('machineDefinition', this.machineDefinition)
       this.startMachine()
     }
