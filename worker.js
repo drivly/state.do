@@ -35,10 +35,10 @@ export class State {
         const url = typeof callback === 'string' || callback instanceof String ? callback : callback.url
         const init = callback.init || { method: state.meta.method || 'POST' }
         init.body = JSON.stringify(state.meta.body || state.event)
-
+        console.log({ url, init })
         const data = await fetch(url, init)
         const event = this.serviceState?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
-        this.service.send(event || data.status.toString(), { data: await data.text() })
+        this.service.send(event || data.status.toString(), await data.json() )
       }
     })
     this.service.start(state)
