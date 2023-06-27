@@ -27,6 +27,7 @@ export class State {
     this.machine = createMachine(this.machineDefinition)
     this.service = interpret(this.machine)
     this.service.onTransition(async (state) => {
+      console.log({ state })
       this.serviceState = state
       this.machineState = state.value
       await this.state.storage.put('machineState', this.machineState)
