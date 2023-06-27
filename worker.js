@@ -27,20 +27,19 @@ export class State {
     this.machine = createMachine(this.machineDefinition)
     this.service = interpret(this.machine)
     this.service.onTransition(async (state) => {
-      console.log({ state })
       this.serviceState = state
       this.machineState = state.value
       await this.state.storage.put('machineState', this.machineState)
-      const meta = Object.values(state.meta)?.[0]
+      const meta = Object.values(state.meta)[0]
       const callback = meta?.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
         const url = typeof callback === 'string' || callback instanceof String ? callback : callback.url
-        const init = callback.init || { method: meta?.method || 'POST' }
+        const init = callback.init || meta?.init || { }
+        init.method = meta?.method || init.method || 'POST'
         init.body = JSON.stringify(meta?.body || state.event)
-        console.log({ url, init })
         const data = await fetch(url, init)
         const event = this.serviceState?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
-        this.service.send(event || data.status.toString(), await data.json() )
+        this.service.send(event || data.status.toString(), await data.json())
       }
     })
     this.service.start(state)
