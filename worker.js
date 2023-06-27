@@ -30,9 +30,8 @@ export class State {
       this.serviceState = state
       this.machineState = state.value
       await this.state.storage.put('machineState', this.machineState)
-      const callback = state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
+      const callback = state.meta.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
-        // TODO: Let user specify format
         const url = typeof callback === 'string' || callback instanceof String ? callback : callback.url
         const init = callback.init || { method: 'POST' }
         init.body = state.event?.data || undefined
