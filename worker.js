@@ -33,8 +33,8 @@ export class State {
       const callback = state.meta.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
         const url = typeof callback === 'string' || callback instanceof String ? callback : callback.url
-        const init = callback.init || { method: 'POST' }
-        init.body = state.event?.data || undefined
+        const init = callback.init || { method: state.meta.method || 'POST' }
+        init.body = JSON.stringify(state.meta.body || state.event)
 
         const data = await fetch(url, init)
         const event = this.serviceState?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
