@@ -34,7 +34,7 @@ export class State {
       if (callback) {
         const url = typeof callback === 'string' || callback instanceof String ? callback : callback.url
         const init = callback.init || { method: state.meta.method || 'POST' }
-        init.body = JSON.stringify(state.meta.body || state.event)
+        init.body = state.meta.body || JSON.stringify(state.event)
 
         const data = await fetch(url, init)
         const event = this.serviceState?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
