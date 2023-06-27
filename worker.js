@@ -31,11 +31,12 @@ export class State {
       this.serviceState = state
       this.machineState = state.value
       await this.state.storage.put('machineState', this.machineState)
-      const callback = state.meta.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
+      const meta = Object.values(state.meta)?.[0]
+      const callback = meta?.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
         const url = typeof callback === 'string' || callback instanceof String ? callback : callback.url
-        const init = callback.init || { method: state.meta.method || 'POST' }
-        init.body = JSON.stringify(state.meta.body || state.event)
+        const init = callback.init || { method: meta?.method || 'POST' }
+        init.body = JSON.stringify(meta?.body || state.event)
         console.log({ url, init })
         const data = await fetch(url, init)
         const event = this.serviceState?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
