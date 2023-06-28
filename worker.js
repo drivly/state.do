@@ -73,7 +73,7 @@ export class State {
       },
       instance,
       state: this.machineState,
-      events: this.serviceState?.nextEvents.map((e) => `${origin}/${instance}/${e.replaceAll(' ', '+')}`),
+      events: this.serviceState?.nextEvents.map((e) => `${origin}/${instance}/${encodeURIComponent(e)}`),
       user,
     }
     if (retval.events && !retval.events.length) delete retval.events
