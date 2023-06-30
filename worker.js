@@ -37,6 +37,7 @@ export class State {
         const init = callback.init || meta?.init || { }
         init.method = meta?.method || init.method || 'POST'
         init.body = JSON.stringify(meta?.body || state.event)
+        console.log({ url, init, state })
         const data = await fetch(url, init)
         const event = this.serviceState?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
         this.service.send(event || data.status.toString(), await data.json())
