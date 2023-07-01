@@ -27,8 +27,8 @@ export class State {
     this.machine = createMachine(this.machineDefinition)
     this.service = interpret(this.machine)
     this.service.onTransition(async (state) => {
-      if (this.machineState === state.value) return
       this.serviceState = state
+      if (this.machineState === state.value) return
       this.machineState = state.value
       await this.state.storage.put('machineState', this.machineState)
       const meta = Object.values(state.meta)[0]
