@@ -14,6 +14,27 @@ Read current state:
 Send event to machine:
 <https://state.do/:key/:event>
 
+## Callbacks
+
+Callbacks can be added directly to the state as a url, or a configuration object with url and init or body. Alternatively, you can define these properties as children of the `meta` property from the machine definition and from the editor:
+
+```json
+"State": {
+  "meta": {
+    "callback": "https://webhooks.do/state",
+    "body": {
+      "Hello": "world"
+    }
+  },
+  "on": {
+    "Event": {
+      "target": "State 2"
+    }
+  }
+},
+```
+
+
 ## Example machine with callbacks
 
 ```mermaid
