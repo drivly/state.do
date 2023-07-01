@@ -93,17 +93,21 @@ export class State {
     }
     const stateMap = () => {
       retval.state = this.machineState
-      if (this.serviceState?.nextEvents && this.serviceState.nextEvents.length) 
+      if (this.serviceState?.nextEvents && this.serviceState.nextEvents.length)
         retval.events = this.serviceState.nextEvents.map((e) => `${origin}/${instance}/${encodeURIComponent(e)}`)
     }
-    if ((search && (!this.machineDefinition || isSearchBasedUpdate) || method === 'POST')) {
-      await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
-      stateMap()
-    } else if (search === '?reset') {
+    if (search === '?reset') {
       await this.reset()
       stateMap()
-    } else if (search === '?machine' && this.machineDefinition) {
-      retval.machine = this.machineDefinition
+    } else if (search.startsWith('?import=')) {
+      const machine = await fetch(decodeURIComponent(search.substring('?import='.length))).then(res => res.json())
+      await this.update(machine)
+      stateMap()
+    } else if (search === '?machine') {
+      if (this.machineDefinition) retval.machine = this.machineDefinition
+    } else if ((search && (!this.machineDefinition || isSearchBasedUpdate) || method === 'POST')) {
+      await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
+      stateMap()
     } else if (stateEvent) {
       this.service?.send(stateEvent)
       stateMap()
