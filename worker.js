@@ -72,12 +72,6 @@ export class State {
     const [instance, stateEvent] = pathSegments
     const update = '?update='
     const isSearchBasedUpdate = search.startsWith(update)
-    if ((search && (!this.machineDefinition || isSearchBasedUpdate) || method === 'POST'))
-      await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
-    else if (search === '?reset')
-      await this.reset()
-    if (stateEvent) this.service?.send(stateEvent)
-
     const retval = {
       api: {
         icon: '●→',
@@ -96,11 +90,25 @@ export class State {
         repo: 'https://github.com/drivly/state.do',
       },
       instance,
-      state: this.machineState,
-      events: this.serviceState?.nextEvents.map((e) => `${origin}/${instance}/${encodeURIComponent(e)}`),
-      user,
     }
-    if (retval.events && !retval.events.length) delete retval.events
+    const stateMap = () => {
+      retval.state = this.machineState
+      if (this.serviceState?.nextEvents && this.serviceState.nextEvents.length) 
+        retval.events = this.serviceState.nextEvents.map((e) => `${origin}/${instance}/${encodeURIComponent(e)}`)
+    }
+    if ((search && (!this.machineDefinition || isSearchBasedUpdate) || method === 'POST')) {
+      await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
+      stateMap()
+    } else if (search === '?reset') {
+      await this.reset()
+      stateMap()
+    } else if (search === '?machine') {
+      retval.machine = this.machineDefinition
+    } else if (stateEvent) {
+      this.service?.send(stateEvent)
+      stateMap()
+    }
+    retval.user = user
     return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } })
   }
 }
