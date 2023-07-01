@@ -102,10 +102,12 @@ export class State {
     } else if (search === '?reset') {
       await this.reset()
       stateMap()
-    } else if (search === '?machine') {
+    } else if (search === '?machine' && this.machineDefinition) {
       retval.machine = this.machineDefinition
     } else if (stateEvent) {
       this.service?.send(stateEvent)
+      stateMap()
+    } else {
       stateMap()
     }
     retval.user = user
