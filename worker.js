@@ -50,12 +50,13 @@ export class State {
   async reset() {
     // Stop the service and reset the state before restarting it
     this.service?.stop()
-    this.machineState = undefined
     this.serviceState = undefined
-    await this.state.storage.delete('machineState')
-
+    if (this.machineState) {
+      this.machineState = undefined
+      await this.state.storage.delete('machineState')
+    }
     // Restart the service
-    this.startMachine()
+    if (this.machineDefinition) this.startMachine()
   }
 
   async update(machineDefinition) {
