@@ -49,7 +49,7 @@ export class State {
 
   async reset() {
     // Stop the service and reset the state before restarting it
-    this.service.stop()
+    this.service?.stop()
     this.machineState = undefined
     this.serviceState = undefined
     await this.state.storage.delete('machineState')
@@ -61,7 +61,7 @@ export class State {
   async update(machineDefinition) {
     // Don't update if the new definition is empty or hasn't changed
     if (!machineDefinition || machineDefinition === this.machineDefinition) return
-    this.service.stop()
+    this.service?.stop()
     await this.state.storage.put('machineDefinition', this.machineDefinition = machineDefinition)
     this.startMachine(this.machineState)
   }
