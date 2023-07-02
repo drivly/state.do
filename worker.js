@@ -48,13 +48,14 @@ export class State {
       this.service.start(state)
     } catch (error) {
       // Machines with new definitions that have incompatible states can't recycle the old state
-      this.service.start()
+      this.reset()
     }
   }
 
   async reset() {
     // Stop the service and reset the state before restarting it
     this.service?.stop()
+    this.service = undefined
     this.serviceState = undefined
     if (this.machineState) {
       this.machineState = undefined
