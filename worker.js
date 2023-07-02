@@ -115,10 +115,8 @@ export class State {
     } else if ((search && (!this.machineDefinition || isSearchBasedUpdate) || method === 'POST')) {
       await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
       stateMap()
-    } else if (stateEvent) {
-      this.service?.send(stateEvent)
-      stateMap()
     } else {
+      if (stateEvent) this.service?.send(stateEvent)
       stateMap()
     }
     retval.user = user
