@@ -44,7 +44,12 @@ export class State {
         this.service.send(event || data.status.toString(), await data.json())
       }
     })
-    this.service.start(state)
+    try {
+      this.service.start(state)
+    } catch (error) {
+      // Machines with new definitions that have incompatible states can't recycle the old state
+      this.service.start()
+    }
   }
 
   async reset() {
