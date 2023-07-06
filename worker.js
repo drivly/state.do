@@ -74,11 +74,10 @@ export class State {
   }
 
   async fetch(req) {
-    const { user, redirect, method, origin, pathSegments, search } = await this.env.CTX.fetch(req).then(res => res.json())
+    let { user, redirect, method, origin, pathSegments, search, json } = await this.env.CTX.fetch(req).then(res => res.json())
     if (redirect) return Response.redirect(redirect)
-    let json
     try {
-      json = await (req.clone()).json()
+      json = json || await (req.clone()).json()
     } catch { }
     const [instance, stateEvent] = pathSegments
     const update = '?update='
