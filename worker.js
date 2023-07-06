@@ -76,7 +76,7 @@ export class State {
   async fetch(req) {
     const { user, redirect, method, origin, pathSegments, search } = await this.env.CTX.fetch(req).then(res => res.json())
     if (redirect) return Response.redirect(redirect)
-    const json
+    let json
     try {
       json = await (req.clone()).json()
     } catch { }
