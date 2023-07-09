@@ -3,6 +3,17 @@ import { createMachine, interpret } from 'xstate'
 
 export default {
   fetch: (req, env) => {
+    if (req.method == 'OPTIONS') {
+      return new Response(null, {
+        headers: {
+          'Access-Control-Allow-Origin': req.headers.get('Origin') || req.headers.get('host'),
+          'Access-Control-Allow-Credentials': 'true',
+          'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
+          'Access-Control-Allow-Headers': 'Content-Type, Authorization, Cookie, X-Forwarded-Proto, X-Forwarded-For',
+          'Access-Control-Max-Age': 86400,
+        },
+      })
+    }
     const { hostname, pathname } = new URL(req.url)
     const instance = pathname.split('/')[1]
     const id = env.STATE.idFromName(hostname + instance)
