@@ -46,7 +46,8 @@ export class State {
       const callback = meta?.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
         const url = typeof callback === 'string' || callback instanceof String ? callback : callback.url
-        const init = callback.init || meta?.init || {}
+        const init = callback.init || meta?.init || { }
+        init.headers = meta?.headers || init.headers || { 'content-type': 'application/json' }
         init.method = meta?.method || init.method || 'POST'
         init.body = JSON.stringify(meta?.body || state.event)
         console.log({ url, init, state })
