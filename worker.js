@@ -88,9 +88,6 @@ export class State {
   async fetch(req) {
     let { user, redirect, method, origin, pathSegments, search, json } = await this.env.CTX.fetch(req).then(res => res.json())
     if (redirect) return Response.redirect(redirect)
-    try {
-      json = json || await (req.clone()).json()
-    } catch { }
     const [instance, stateEvent] = pathSegments
     const update = '?update='
     const isSearchBasedUpdate = search.startsWith(update)
