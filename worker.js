@@ -128,7 +128,7 @@ export class State {
       await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
       stateMap()
     } else {
-      console.log(json)
+      if (json) console.log(json)
       if (stateEvent) this.service?.send(stateEvent, json)
       else if (json) this.service?.send(json)
       stateMap()
