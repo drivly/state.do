@@ -128,7 +128,7 @@ export class State {
       await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
       stateMap()
     } else {
-      if (stateEvent) this.service?.send(stateEvent)
+      if (stateEvent) this.service?.send(stateEvent, json)
       stateMap()
     }
     retval.user = user
