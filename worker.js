@@ -1,6 +1,5 @@
 import { createMachine, interpret } from 'xstate'
 
-
 export default {
   fetch: (req, env) => {
     if (req.method == 'OPTIONS') {
@@ -52,6 +51,7 @@ export class State {
         init.body = JSON.stringify(meta?.body || state.event)
         console.log({ url, init, state })
         const data = await fetch(url, init)
+        // Escape special regex characters and replace x with \d to check if the callback status code matches an event (e.g. 2xx)
         const event = state?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
         this.service.send(event || data.status.toString(), await data.json())
       }
@@ -129,6 +129,7 @@ export class State {
       stateMap()
     } else {
       if (stateEvent) this.service?.send(stateEvent, json)
+      else if (json) this.service?.send(json)
       stateMap()
     }
     retval.user = user
