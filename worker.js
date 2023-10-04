@@ -26,7 +26,10 @@ export class State {
     this.state = state
     this.env = env
     state.blockConcurrencyWhile(async () => {
-      ;[this.machineDefinition, this.machineState] = await Promise.all([this.state.storage.get('machineDefinition'), this.state.storage.get('machineState')])
+      ;[this.machineDefinition, this.machineState] = await Promise.all([
+        this.state.storage.get('machineDefinition'),
+        this.state.storage.get('machineState'),
+      ])
       if (this.machineDefinition) {
         this.startMachine(this.machineState)
       }
@@ -45,7 +48,7 @@ export class State {
       const callback = meta?.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
         const url = typeof callback === 'string' || callback instanceof String ? callback : callback.url
-        const init = callback.init || meta?.init || { }
+        const init = callback.init || meta?.init || {}
         init.headers = meta?.headers || init.headers || { 'content-type': 'application/json' }
         init.method = meta?.method || init.method || 'POST'
         init.body = JSON.stringify(meta?.body || state.event)
@@ -81,12 +84,12 @@ export class State {
     // Don't update if the new definition is empty or hasn't changed
     if (!machineDefinition || machineDefinition === this.machineDefinition) return
     this.service?.stop()
-    await this.state.storage.put('machineDefinition', this.machineDefinition = machineDefinition)
+    await this.state.storage.put('machineDefinition', (this.machineDefinition = machineDefinition))
     this.startMachine(this.machineState)
   }
 
   async fetch(req) {
-    let { user, redirect, method, origin, pathSegments, search, json } = await this.env.CTX.fetch(req).then(res => res.json())
+    let { user, redirect, method, origin, pathSegments, search, json } = await this.env.CTX.fetch(req).then((res) => res.json())
     if (redirect) return Response.redirect(redirect)
     const [instance, stateEvent] = pathSegments
     const update = '?update='
@@ -119,12 +122,12 @@ export class State {
       await this.reset()
       stateMap()
     } else if (search.startsWith('?import=')) {
-      const machine = await fetch(decodeURIComponent(search.substring('?import='.length))).then(res => res.json())
+      const machine = await fetch(decodeURIComponent(search.substring('?import='.length))).then((res) => res.json())
       await this.update(machine)
       stateMap()
     } else if (search === '?machine') {
       if (this.machineDefinition) retval.machine = this.machineDefinition
-    } else if ((search && (!this.machineDefinition || isSearchBasedUpdate) || method === 'POST')) {
+    } else if ((search && (!this.machineDefinition || isSearchBasedUpdate)) || (method === 'POST' && !Array.isArray(json))) {
       await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
       stateMap()
     } else {
