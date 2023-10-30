@@ -26,10 +26,7 @@ export class State {
     this.state = state
     this.env = env
     state.blockConcurrencyWhile(async () => {
-      ;[this.machineDefinition, this.machineState] = await Promise.all([
-        this.state.storage.get('machineDefinition'),
-        this.state.storage.get('machineState'),
-      ])
+      ;[this.machineDefinition, this.machineState] = await Promise.all([this.state.storage.get('machineDefinition'), this.state.storage.get('machineState')])
       if (this.machineDefinition) {
         this.startMachine(this.machineState)
       }
@@ -113,29 +110,25 @@ export class State {
       },
       instance,
     }
-    const stateMap = () => {
-      retval.state = this.machineState
-      if (this.serviceState?.nextEvents && this.serviceState.nextEvents.length)
-        retval.events = this.serviceState.nextEvents.map((e) => `${origin}/${instance}/${encodeURIComponent(e)}`)
-    }
     if (search === '?reset') {
       await this.reset()
-      stateMap()
     } else if (search.startsWith('?import=')) {
       const machine = await fetch(decodeURIComponent(search.substring('?import='.length))).then((res) => res.json())
       await this.update(machine)
-      stateMap()
     } else if (search === '?machine') {
       if (this.machineDefinition) retval.machine = this.machineDefinition
+      retval.user = user
+      return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } })
     } else if ((search && (!this.machineDefinition || isSearchBasedUpdate)) || (method === 'POST' && !Array.isArray(json))) {
       await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
-      stateMap()
     } else {
       if (json) console.log(json)
       if (stateEvent) this.service?.send(stateEvent, json)
       else if (json) this.service?.send(json)
-      stateMap()
     }
+    retval.state = this.machineState
+    if (this.serviceState?.nextEvents && this.serviceState.nextEvents.length)
+      retval.events = this.serviceState.nextEvents.map((e) => `${origin}/${instance}/${encodeURIComponent(e)}`)
     retval.user = user
     return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } })
   }
