@@ -1,4 +1,4 @@
-import { createMachine, interpret } from 'xstate'
+import { Interpreter, MachineConfig, StateMachine, StateValue, State as XState, createMachine, interpret } from 'xstate'
 
 export default {
   fetch: (req, env) => {
@@ -9,7 +9,7 @@ export default {
           'Access-Control-Allow-Credentials': 'true',
           'Access-Control-Allow-Methods': 'GET, POST, PUT, DELETE, OPTIONS',
           'Access-Control-Allow-Headers': 'Content-Type, Authorization, Cookie, X-Forwarded-Proto, X-Forwarded-For',
-          'Access-Control-Max-Age': 86400,
+          'Access-Control-Max-Age': '86400',
         },
       })
     }
@@ -22,6 +22,19 @@ export default {
 }
 
 export class State {
+  state
+  env
+  /** @type {MachineConfig} */
+  machineDefinition
+  /** @type {StateValue} */
+  machineState
+  /** @type {StateMachine} */
+  machine
+  /** @type {Interpreter} */
+  service
+  /** @type {XState} */
+  serviceState
+
   constructor(state, env) {
     this.state = state
     this.env = env
@@ -33,6 +46,9 @@ export class State {
     })
   }
 
+  /**
+   * @param {StateValue|undefined} state
+   */
   startMachine(state) {
     this.machine = createMachine(this.machineDefinition)
     this.service = interpret(this.machine)
@@ -80,6 +96,9 @@ export class State {
     if (this.machineDefinition) this.startMachine()
   }
 
+  /**
+   * @param {MachineConfig} machineDefinition
+   */
   async update(machineDefinition) {
     // Don't update if the new definition is empty or hasn't changed
     if (!machineDefinition || machineDefinition === this.machineDefinition) return
@@ -88,6 +107,9 @@ export class State {
     this.startMachine(this.machineState)
   }
 
+  /**
+   * @param {Request} req 
+   */
   async fetch(req) {
     let { user, redirect, method, origin, pathSegments, search, json } = await this.env.CTX.fetch(req).then((res) => res.json())
     if (redirect) return Response.redirect(redirect)
