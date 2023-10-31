@@ -44,7 +44,7 @@ export class State {
       const meta = Object.values(state.meta)[0]
       const callback = meta?.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
-        let callbacks = Array.isArray(callback) ? callback : [callback]
+        const callbacks = Array.isArray(callback) ? callback : [callback]
         for (let i = 0; i < callbacks.length; i++) {
           const url = typeof callbacks[i] === 'string' || callbacks[i] instanceof String ? callbacks[i] : callbacks[i].url
           const init = callbacks[i].init || meta?.init || {}
