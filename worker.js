@@ -44,16 +44,19 @@ export class State {
       const meta = Object.values(state.meta)[0]
       const callback = meta?.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
-        const url = typeof callback === 'string' || callback instanceof String ? callback : callback.url
-        const init = callback.init || meta?.init || {}
-        init.headers = meta?.headers || init.headers || { 'content-type': 'application/json' }
-        init.method = meta?.method || init.method || 'POST'
-        init.body = JSON.stringify(meta?.body || state.event)
-        console.log({ url, init, state })
-        const data = await fetch(url, init)
-        // Escape special regex characters and replace x with \d to check if the callback status code matches an event (e.g. 2xx)
-        const event = state?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
-        this.service.send(event || data.status.toString(), await data.json())
+        let callbacks = Array.isArray(callback) ? callback : [callback]
+        for (let i = 0; i < callbacks.length; i++) {
+          const url = typeof callbacks[i] === 'string' || callbacks[i] instanceof String ? callbacks[i] : callbacks[i].url
+          const init = callbacks[i].init || meta?.init || {}
+          init.headers = meta?.headers || init.headers || { 'content-type': 'application/json' }
+          init.method = meta?.method || init.method || 'POST'
+          init.body = JSON.stringify(meta?.body || state.event)
+          console.log({ url, init, state })
+          const data = await fetch(url, init)
+          // Escape special regex characters and replace x with \d to check if the callback status code matches an event (e.g. 2xx)
+          const event = state?.nextEvents.find((e) => data.status.toString().match(new RegExp(e.replace(/[.*+?^${}()|[\]\\]/g, '\\$&').replace(/x/gi, '\\d'))))
+          this.service.send(event || data.status.toString(), await data.json())
+        }
       }
     })
     try {
