@@ -1,4 +1,4 @@
-import { Interpreter, MachineConfig, StateMachine, StateValue, State as XState, createMachine, interpret } from 'xstate'
+import { Interpreter, State as XState, createMachine, interpret } from 'xstate'
 
 export default {
   fetch: (req, env) => {
@@ -24,15 +24,10 @@ export default {
 export class State {
   state
   env
-  /** @type {MachineConfig} */
   machineDefinition
-  /** @type {StateValue} */
   machineState
-  /** @type {StateMachine} */
   machine
-  /** @type {Interpreter} */
   service
-  /** @type {XState} */
   serviceState
 
   constructor(state, env) {
