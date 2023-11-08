@@ -1,4 +1,4 @@
-import { Interpreter, MachineConfig, StateMachine, StateValue, State as XState, createMachine, interpret } from 'xstate'
+import { createMachine, interpret } from 'xstate'
 
 export default {
   fetch: (req, env) => {
@@ -24,15 +24,15 @@ export default {
 export class State {
   state
   env
-  /** @type {MachineConfig} */
+  /** @type {import('xstate').MachineConfig} */
   machineDefinition
-  /** @type {StateValue} */
+  /** @type {import('xstate').StateValue} */
   machineState
-  /** @type {StateMachine} */
+  /** @type {import('xstate').StateMachine} */
   machine
-  /** @type {Interpreter} */
+  /** @type {import('xstate').Interpreter} */
   service
-  /** @type {XState} */
+  /** @type {import('xstate').State} */
   serviceState
 
   constructor(state, env) {
@@ -47,7 +47,7 @@ export class State {
   }
 
   /**
-   * @param {StateValue|undefined} state
+   * @param {import('xstate').StateValue|undefined} state
    */
   startMachine(state) {
     this.machine = createMachine(this.machineDefinition)
@@ -64,7 +64,7 @@ export class State {
         for (let i = 0; i < callbacks.length; i++) {
           const url = typeof callbacks[i] === 'string' || callbacks[i] instanceof String ? callbacks[i] : callbacks[i].url
           const init = callbacks[i].init || meta?.init || {}
-          init.headers = meta?.headers || init.headers || { 'content-type': 'application/json' }
+          init.headers = { 'content-type': 'application/json', ...(meta?.headers || init.headers) }
           init.method = meta?.method || init.method || 'POST'
           init.body = JSON.stringify(meta?.body || state.event)
           console.log({ url, init, state })
@@ -97,7 +97,7 @@ export class State {
   }
 
   /**
-   * @param {MachineConfig} machineDefinition
+   * @param {import('xstate').MachineConfig} machineDefinition
    */
   async update(machineDefinition) {
     // Don't update if the new definition is empty or hasn't changed
@@ -108,7 +108,7 @@ export class State {
   }
 
   /**
-   * @param {Request} req 
+   * @param {Request} req
    */
   async fetch(req) {
     let { user, redirect, method, origin, pathSegments, search, json } = await this.env.CTX.fetch(req).then((res) => res.json())

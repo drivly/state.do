@@ -1,29 +1,15 @@
 {
-  "version": "0.2.0",
   "configurations": [
     {
-      "name": "Cloudflare: debug server-side",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "yarn dev --local true"
-    },
-    {
-      "name": "Cloudflare: debug client-side",
-      "type": "pwa-chrome",
-      "request": "launch",
-      "url": "http://localhost:8787"
-    },
-    {
-      "name": "Cloudflare: debug full stack",
-      "type": "node-terminal",
-      "request": "launch",
-      "command": "yarn dev --local true",
-      "console": "integratedTerminal",
-      "serverReadyAction": {
-        "pattern": "started server on .+, url: (https?://.+)",
-        "uriFormat": "%s",
-        "action": "debugWithChrome"
-      }
+      "name": "Wrangler",
+      "type": "node",
+      "request": "attach",
+      "port": 9229,
+      "cwd": "/",
+      "resolveSourceMapLocations": null,
+      "attachExistingChildren": false,
+      "autoAttachChildProcesses": false,
+      "sourceMaps": true // works with or without this line
     }
   ]
 }
