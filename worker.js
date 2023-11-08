@@ -55,8 +55,7 @@ export class State {
     this.service.onTransition(async (state) => {
       this.serviceState = state
       if (this.machineState === state.value) return
-      this.machineState = state.value
-      await this.state.storage.put('machineState', this.machineState)
+      await this.state.storage.put('machineState', (this.machineState = state.value))
       const meta = Object.values(state.meta)[0]
       const callback = meta?.callback || state.configuration.flatMap((c) => c.config).reduce((acc, c) => ({ ...acc, ...c }), {}).callback
       if (callback) {
@@ -64,9 +63,9 @@ export class State {
         for (let i = 0; i < callbacks.length; i++) {
           const url = typeof callbacks[i] === 'string' || callbacks[i] instanceof String ? callbacks[i] : callbacks[i].url
           const init = callbacks[i].init || meta?.init || {}
-          init.headers = { 'content-type': 'application/json', ...(meta?.headers || init.headers) }
-          init.method = meta?.method || init.method || 'POST'
-          init.body = JSON.stringify(meta?.body || state.event)
+          init.headers = { 'content-type': 'application/json', ...(callbacks[i].headers || meta?.headers || init.headers) }
+          init.method = callbacks[i].method || meta?.method || init.method || 'POST'
+          init.body = JSON.stringify(callbacks[i].body || meta?.body || state.event)
           console.log({ url, init, state })
           const data = await fetch(url, init)
           // Escape special regex characters and replace x with \d to check if the callback status code matches an event (e.g. 2xx)
