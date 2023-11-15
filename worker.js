@@ -143,7 +143,7 @@ export class State {
       if (this.machineDefinition) retval.machine = this.machineDefinition
       retval.user = user
       return new Response(JSON.stringify(retval, null, 2), { headers: { 'content-type': 'application/json; charset=utf-8' } })
-    } else if ((search && (!this.machineDefinition || isSearchBasedUpdate)) || (method === 'POST' && json?.states?.length)) {
+    } else if ((search && (!this.machineDefinition || isSearchBasedUpdate)) || (method === 'POST' && json?.states)) {
       await this.update((search && JSON.parse(decodeURIComponent(search.substring(isSearchBasedUpdate ? update.length : 1)))) || json)
     } else {
       if (json) console.log(json)
