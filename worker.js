@@ -65,7 +65,7 @@ export class State {
           const init = callbacks[i].init || meta?.init || {}
           init.headers = { 'content-type': 'application/json', ...(callbacks[i].headers || meta?.headers || init.headers) }
           init.method = callbacks[i].method || meta?.method || init.method || 'POST'
-          init.body = JSON.stringify(callbacks[i].body || meta?.body || state.event)
+          if (['POST', 'PUT', 'PATCH'].includes(init.method)) init.body = JSON.stringify(callbacks[i].body || meta?.body || state.event)
           console.log({ url, init, state })
           const data = await fetch(url, init)
           // Escape special regex characters and replace x with \d to check if the callback status code matches an event (e.g. 2xx)
