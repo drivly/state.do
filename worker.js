@@ -63,9 +63,12 @@ export class State {
         for (let i = 0; i < callbacks.length; i++) {
           const url = typeof callbacks[i] === 'string' || callbacks[i] instanceof String ? callbacks[i] : callbacks[i].url
           const init = callbacks[i].init || meta?.init || {}
-          init.headers = { 'content-type': 'application/json', ...(callbacks[i].headers || meta?.headers || init.headers) }
-          init.method = callbacks[i].method || meta?.method || init.method || 'POST'
-          if (['POST', 'PUT', 'PATCH'].includes(init.method)) init.body = JSON.stringify(callbacks[i].body || meta?.body || state.event)
+          init.headers = callbacks[i].headers || meta?.headers || init.headers || {}
+          init.method = callbacks[i].method || meta?.method || init.method || 'GET'
+          if (!init.body && ['POST', 'PUT', 'PATCH'].includes(init.method)) {
+            init.body = JSON.stringify(callbacks[i].body || meta?.body || state.event)
+            if (!init.headers['content-type']) init.headers['content-type'] = 'application/json'
+          }
           console.log({ url, init, state })
           const data = await fetch(url, init)
           // Escape special regex characters and replace x with \d to check if the callback status code matches an event (e.g. 2xx)
