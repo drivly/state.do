@@ -64,11 +64,14 @@ export class State {
           const url = typeof callbacks[i] === 'string' || callbacks[i] instanceof String ? callbacks[i] : callbacks[i].url
           const init = callbacks[i].init || meta?.init || {}
           init.headers = callbacks[i].headers || meta?.headers || init.headers || {}
+          // Check if the callback has a body (cascade: callback > meta > init > event)
+          const body = callbacks[i].body || meta?.body
+          // If the callback has a body, set it and set the method to POST
+          if (body) init.body = JSON.stringify(body)
           init.method = callbacks[i].method || meta?.method || init.method || init.body ? 'POST' : 'GET'
-          if (!init.body && ['POST', 'PUT', 'PATCH'].includes(init.method))
-            init.body = JSON.stringify(callbacks[i].body || meta?.body || state.event)
-          if (init.body && !init.headers['content-type'])
-            init.headers['content-type'] = 'application/json'
+          // If a method requests abody but doesn't have one, stringify the event and set the content-type to application/json
+          if (!init.body && ['POST', 'PUT', 'PATCH'].includes(init.method)) init.body = JSON.stringify(state.event)
+          if (init.body && !init.headers['content-type']) init.headers['content-type'] = 'application/json'
           console.log({ url, init, state })
           const data = await fetch(url, init)
           // Escape special regex characters and replace x with \d to check if the callback status code matches an event (e.g. 2xx)
