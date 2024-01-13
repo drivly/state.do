@@ -1,4 +1,4 @@
-import { createMachine, interpret } from 'xstate'
+import { createMachine, createActor } from 'xstate'
 
 export default {
   fetch: (req, env) => {
@@ -30,7 +30,7 @@ export class State {
   machineState
   /** @type {import('xstate').StateMachine} */
   machine
-  /** @type {import('xstate').Interpreter} */
+  /** @type {import('xstate').Actor} */
   service
   /** @type {import('xstate').State} */
   serviceState
@@ -51,8 +51,8 @@ export class State {
    */
   startMachine(state) {
     this.machine = createMachine(this.machineDefinition)
-    this.service = interpret(this.machine)
-    this.service.onTransition(async (state) => {
+    this.service = createActor(this.machine)
+    this.service.subscribe(async (state) => {
       this.serviceState = state
       if (this.machineState === state.value) return
       await this.state.storage.put('machineState', (this.machineState = state.value))
