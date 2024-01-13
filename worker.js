@@ -64,7 +64,7 @@ export class State {
           const url = typeof callbacks[i] === 'string' || callbacks[i] instanceof String ? callbacks[i] : callbacks[i].url
           const init = callbacks[i].init || meta?.init || {}
           init.headers = callbacks[i].headers || meta?.headers || init.headers || {}
-          init.method = callbacks[i].method || meta?.method || init.method || 'GET'
+          init.method = callbacks[i].method || meta?.method || init.method || init.body ? 'POST' : 'GET'
           if (!init.body && ['POST', 'PUT', 'PATCH'].includes(init.method)) {
             init.body = JSON.stringify(callbacks[i].body || meta?.body || state.event)
             if (!init.headers['content-type']) init.headers['content-type'] = 'application/json'
