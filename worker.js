@@ -61,7 +61,7 @@ export class State {
       if (callback) {
         const callbacks = Array.isArray(callback) ? callback : [callback]
         for (let i = 0; i < callbacks.length; i++) {
-          const url = typeof callbacks[i] === 'string' || callbacks[i] instanceof String ? callbacks[i] : callbacks[i].url
+          const url = typeof callbacks[i] === 'string' || callbacks[i] instanceof String ? callbacks[i] : (callbacks[i].url || callbacks[i].callback)
           const init = callbacks[i].init || meta?.init || {}
           init.headers = callbacks[i].headers || meta?.headers || init.headers || {}
           // Check if the callback has a body (cascade: callback > meta > init > event)
