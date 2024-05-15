@@ -42,6 +42,8 @@ Callbacks can be added to the state's `meta` property as a url or as a configura
 ```
 More than one callback can be called by passing an array of callbacks.
 
+HTTP status codes from the callback can be passed as events to the state machine by adding the status code as an event, optionally with wildcards (e.g. 4XX to trap client-side errors).
+
 ## Example machine with callbacks
 
 ```mermaid
