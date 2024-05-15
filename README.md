@@ -19,10 +19,11 @@ Initialize machine:
 ```curl
 https://state.do/:key?{"id":"fetch","initial":"init","states":{"init":{"on":{"FETCH":"loading"}},"loading":{"callback":"https://fetcher.do/60sec/https://example.com/","on":{"4XX":"fault","5XX":"failure","*":"success"}},"failure":{"callback":"https://alarms.do/?fromnow=10sec&callback=https://state.do/:key/RETRY","on":{"RETRY":{"target":"loading"}}},"fault":{"callback":"https://example.logging.do/error?message=","type":"final"},"success":{"callback":"https://graphology.do.cf/:key?newnode?example|","type":"final"}}}
 ```
+or POST to `https://state.do/:key`
 
 ## Callbacks
 
-Callbacks can be added directly to the state as a url, or a configuration object with url and init or body. Alternatively, you can define these properties as children of the `meta` property from the machine definition and from the editor:
+Callbacks can be added to the state's `meta` property as a url or as a configuration object with url and init or body:
 
 ```json
 "State": {
@@ -39,7 +40,7 @@ Callbacks can be added directly to the state as a url, or a configuration object
   }
 },
 ```
-
+More than one callback can be called by passing an array of callbacks.
 
 ## Example machine with callbacks
 
